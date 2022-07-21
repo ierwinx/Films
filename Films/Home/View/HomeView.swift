@@ -1,4 +1,5 @@
 import UIKit
+import RxSwift
 
 class HomeView: UIViewController {
 
@@ -9,6 +10,8 @@ class HomeView: UIViewController {
     // MARK: - Variables
     private var router = HomeRouter()
     private var viewModel = HomeViewModel()
+    private var disposeBag = DisposeBag()
+    public var peliculas: MoviesModel?
 
     // MARK: - Initializers
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -26,8 +29,34 @@ class HomeView: UIViewController {
 
         tblMovies.delegate = self
         tblMovies.dataSource = self
-        tblMovies.register(UITableViewCell.self, forCellReuseIdentifier: "CeldaMovies")
-        spinLoader.isHidden = true
+        tblMovies.register(UINib(nibName: "PeliculaTableViewCell", bundle: Bundle.main),
+                           forCellReuseIdentifier: "CeldaMovies")
+        spinLoader.isHidden = false
+        spinLoader.startAnimating()
+
+        getData()
+    }
+
+    private func getData() {
+        return viewModel.getListPupularMovies()
+            .subscribe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
+            .subscribe { peliculas in
+                self.peliculas = peliculas
+            } onError: { error in
+                debugPrint(error)
+                self.reloadTable()
+            } onCompleted: {
+                self.reloadTable()
+            }.disposed(by: disposeBag)
+    }
+
+    private func reloadTable() {
+        DispatchQueue.main.async {
+            self.spinLoader.stopAnimating()
+            self.spinLoader.isHidden = true
+            self.tblMovies.reloadData()
+        }
     }
 
 }

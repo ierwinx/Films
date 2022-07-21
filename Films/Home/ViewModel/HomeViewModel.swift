@@ -1,4 +1,5 @@
 import Foundation
+import RxSwift
 
 class HomeViewModel {
 
@@ -9,6 +10,11 @@ class HomeViewModel {
         self.view = view
         self.router = router
         self.router?.setSourceView(view)
+    }
+
+    func getListPupularMovies() -> Observable<MoviesModel> {
+        let getPelis = MoviesMannager()
+        return getPelis.getPopularMovies()
     }
 
 }
