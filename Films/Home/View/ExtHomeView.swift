@@ -30,8 +30,7 @@ extension HomeView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let peli = searchController.isActive && searchController.searchBar.text != "" ?
             self.filteredMovies?[indexPath.row] : self.peliculas?[indexPath.row]
-        let iID = peli?.id ?? 0
-        self.navigationController?.pushViewController(DetailRouter.createViewController(iMovieID: iID), animated: true)
+        router.openDetail(iMovieID: peli?.id ?? 0)
     }
 
 }

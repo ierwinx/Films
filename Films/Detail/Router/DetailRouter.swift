@@ -6,7 +6,7 @@ class DetailRouter {
     private var sourceView: UIViewController?
 
     class func createViewController(iMovieID: Int) -> UIViewController {
-        let view = DetailView()
+        let view = DetailView(nibName: "DetailView", bundle: Bundle.main)
         view.iMovieID = iMovieID
         return view
     }

@@ -9,7 +9,7 @@ class HomeView: UIViewController {
     @IBOutlet weak var spinLoader: UIActivityIndicatorView!
 
     // MARK: - Variables
-    private var router = HomeRouter()
+    public var router = HomeRouter()
     private var viewModel = HomeViewModel()
     private var disposeBag = DisposeBag()
     public var peliculas: [Movie]?
@@ -26,15 +26,6 @@ class HomeView: UIViewController {
         controller.searchBar.placeholder = "Busca una pelicula"
         return controller
     })()
-
-    // MARK: - Initializers
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: "HomeView", bundle: Bundle.main)
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
 
     // MARK: - Lifecycle
     override func viewDidLoad() {

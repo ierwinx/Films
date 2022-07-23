@@ -17,15 +17,6 @@ class DetailView: UIViewController {
     public var iMovieID: Int?
     private var pelicula: DetailModel?
 
-    // MARK: - Initializers
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: "DetailView", bundle: Bundle.main)
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,14 +40,16 @@ class DetailView: UIViewController {
     }
 
     private func fillData() {
-        lblTitle.text = self.pelicula?.title
-        lblSinopsis.text = self.pelicula?.overview
-        lblDate.text = "Fecha: \(self.pelicula?.releaseDate ?? "")"
-        let strUrl = Constants.URL.imagenes + (self.pelicula?.posterPath ?? "")
-        if let url = URL(string: strUrl), let data = try? Data(contentsOf: url) {
-            imgPoster.image = UIImage(data: data)
-        } else {
-            imgPoster.image = UIImage(named: "claqueta")
+        DispatchQueue.main.async {
+            self.lblTitle.text = self.pelicula?.title
+            self.lblSinopsis.text = self.pelicula?.overview
+            self.lblDate.text = "Fecha: \(self.pelicula?.releaseDate ?? "")"
+            let strUrl = Constants.URL.imagenes + (self.pelicula?.posterPath ?? "")
+            if let url = URL(string: strUrl), let data = try? Data(contentsOf: url) {
+                self.imgPoster.image = UIImage(data: data)
+            } else {
+                self.imgPoster.image = UIImage(named: "claqueta")
+            }
         }
     }
 
