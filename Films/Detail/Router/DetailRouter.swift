@@ -3,14 +3,11 @@ import Foundation
 
 class DetailRouter {
 
-    var viewController: UIViewController {
-        return self.createViewController()
-    }
-
     private var sourceView: UIViewController?
 
-    private func createViewController() -> UIViewController {
+    class func createViewController(iMovieID: Int) -> UIViewController {
         let view = DetailView()
+        view.iMovieID = iMovieID
         return view
     }
 

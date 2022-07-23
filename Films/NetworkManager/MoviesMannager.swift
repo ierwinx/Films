@@ -41,8 +41,40 @@ class MoviesMannager {
         }
     }
 
-    func getMovie() {
+    func getMovie(iMovieID: Int) -> Observable<DetailModel> {
 
+        return Observable.create { observer in
+            let strUrl = Constants.URL.main + Constants.Endpoints.detalMovie + "/\(iMovieID)" + "?" + Constants.apiKey
+            let session = URLSession.shared
+            let endpoint: URL = URL(string: strUrl)!
+            var request = URLRequest(url: endpoint)
+            request.httpMethod = "GET"
+            session.dataTask(with: request) { data, response, error in
+
+                guard let serverCode = response as? HTTPURLResponse, error == nil else {
+                    observer.onError(error ?? NSError(domain: "MoviesMannager.getMovie.error", code: 401))
+                    return
+                }
+
+                if serverCode.statusCode == 200 {
+                    guard let dataRes = data,
+                          let dataObj = try? JSONDecoder().decode(DetailModel.self, from: dataRes) else {
+                        observer.onError(NSError(domain: "MoviesMannager.getMovie.parseObj", code: 500))
+                        return
+                    }
+
+                    observer.onNext(dataObj)
+                } else {
+                    observer.onError(error ?? NSError(domain: "MoviesMannager.getMovie.error", code: 401))
+                }
+
+                observer.onCompleted()
+            }.resume()
+
+            return Disposables.create {
+                session.finishTasksAndInvalidate()
+            }
+        }
     }
 
 }

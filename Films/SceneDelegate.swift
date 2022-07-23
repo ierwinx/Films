@@ -10,7 +10,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let viewController = HomeRouter().viewController
+        let viewController = HomeRouter.createViewController()
         let navController = UINavigationController(rootViewController: viewController)
 
         window?.rootViewController = navController

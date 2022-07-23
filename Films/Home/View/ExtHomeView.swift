@@ -8,13 +8,18 @@ extension HomeView: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.peliculas?.results.count ?? 0
+        if searchController.isActive && searchController.searchBar.text != "" {
+            return self.filteredMovies?.count ?? 0
+        } else {
+            return self.peliculas?.count ?? 0
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let celda = tableView.dequeueReusableCell(withIdentifier: "CeldaMovies", for: indexPath)
                 as? PeliculaTableViewCell else { return UITableViewCell() }
-        let peli = self.peliculas?.results[indexPath.row]
+        let peli = searchController.isActive && searchController.searchBar.text != "" ?
+            self.filteredMovies?[indexPath.row] : self.peliculas?[indexPath.row]
         let strTitulo = peli?.originalTitle ?? ""
         let strDescripcion = peli?.overview ?? ""
         let strUrlImage = peli?.posterPath ?? ""
@@ -23,7 +28,19 @@ extension HomeView: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.navigationController?.pushViewController(UIViewController(), animated: true)
+        let peli = searchController.isActive && searchController.searchBar.text != "" ?
+            self.filteredMovies?[indexPath.row] : self.peliculas?[indexPath.row]
+        let iID = peli?.id ?? 0
+        self.navigationController?.pushViewController(DetailRouter.createViewController(iMovieID: iID), animated: true)
+    }
+
+}
+
+extension HomeView: UISearchBarDelegate {
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchController.isActive = false
+        reloadTable()
     }
 
 }

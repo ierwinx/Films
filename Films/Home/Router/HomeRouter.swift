@@ -3,13 +3,9 @@ import UIKit
 
 class HomeRouter {
 
-    var viewController: UIViewController {
-        return self.createViewController()
-    }
-
     private var sourceView: UIViewController?
 
-    private func createViewController() -> UIViewController {
+    public class func createViewController() -> UIViewController {
         let view = HomeView()
         return view
     }
