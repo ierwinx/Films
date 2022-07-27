@@ -1,5 +1,6 @@
 import Foundation
 import RxSwift
+import UIKit
 
 class MoviesMannager {
 
@@ -75,6 +76,41 @@ class MoviesMannager {
                 session.finishTasksAndInvalidate()
             }
         }
+    }
+
+    func getMoviePoster(strPathPoster: String) -> Observable<UIImage> {
+
+        return Observable.create { observer in
+            let strUrl = Constants.URL.imagenes + strPathPoster
+            let session = URLSession.shared
+            let endpoint: URL = URL(string: strUrl)!
+            var request = URLRequest(url: endpoint)
+            request.httpMethod = "GET"
+            session.dataTask(with: request) { data, response, error in
+                guard let serverCode = response as? HTTPURLResponse, error == nil else {
+                    observer.onError(error ?? NSError(domain: "MoviesMannager.getMoviePoster.error", code: 401))
+                    return
+                }
+                if serverCode.statusCode == 200 {
+                    guard let dataRes = data,
+                        let imagen = UIImage(data: dataRes) else {
+                        observer.onError(NSError(domain: "MoviesMannager.getMoviePoster.parseObj", code: 500))
+                        return
+                    }
+                    observer.onNext(imagen)
+                    observer.onCompleted()
+                } else {
+                    observer.onError(error ?? NSError(domain: "MoviesMannager.getMoviePoster.error", code: 401))
+                }
+
+            }.resume()
+
+            return Disposables.create {
+                session.finishTasksAndInvalidate()
+            }
+
+        }
+
     }
 
 }

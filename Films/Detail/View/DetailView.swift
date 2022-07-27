@@ -44,12 +44,27 @@ class DetailView: UIViewController {
             self.lblTitle.text = self.pelicula?.title
             self.lblSinopsis.text = self.pelicula?.overview
             self.lblDate.text = "Fecha: \(self.pelicula?.releaseDate ?? "")"
-            let strUrl = Constants.URL.imagenes + (self.pelicula?.posterPath ?? "")
-            if let url = URL(string: strUrl), let data = try? Data(contentsOf: url) {
-                self.imgPoster.image = UIImage(data: data)
-            } else {
-                self.imgPoster.image = UIImage(named: "claqueta")
-            }
+            self.getPoster(strPoster: self.pelicula?.posterPath ?? "")
+        }
+    }
+
+    private func getPoster(strPoster: String) {
+        viewModel.getImageMovie(strPathImage: strPoster)
+            .subscribe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
+            .subscribe { imagen in
+                self.fillImage(imgPoster: imagen)
+            } onError: { error in
+                debugPrint(error)
+                self.fillImage(imgPoster: nil)
+            } onCompleted: {
+                debugPrint("Exito al completar")
+            }.disposed(by: disposeBag)
+    }
+
+    private func fillImage(imgPoster: UIImage?) {
+        DispatchQueue.main.async {
+            self.imgPoster.image = imgPoster != nil ? imgPoster : UIImage(named: "claqueta")
         }
     }
 

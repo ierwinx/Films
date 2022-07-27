@@ -1,3 +1,4 @@
+import UIKit
 import RxSwift
 import Foundation
 
@@ -15,6 +16,11 @@ class DetailViewModel {
     func getMovieData(iMoviewID: Int) -> Observable<DetailModel> {
         let getPelis = MoviesMannager()
         return getPelis.getMovie(iMovieID: iMoviewID)
+    }
+
+    func getImageMovie(strPathImage: String) -> Observable<UIImage> {
+        let getImage = MoviesMannager()
+        return getImage.getMoviePoster(strPathPoster: strPathImage)
     }
 
 }
